@@ -1,0 +1,48 @@
+from controller import Robot
+
+TIME_STEP = 15
+robot = Robot()
+ds = []
+dsNames = ['ds_right','ds_middle', 'ds_left']
+for i in range(3):
+    ds.append(robot.getDevice(dsNames[i]))
+    ds[i].enable(TIME_STEP)
+
+wheels = []
+wheelsNames = ['wheel1', 'wheel2', 'wheel3', 'wheel4']
+for i in range(4):
+    wheels.append(robot.getDevice(wheelsNames[i]))
+    wheels[i].setPosition(float('inf'))
+    wheels[i].setVelocity(0.0)
+
+
+# print(camera)
+avoidObstacleCounter = 0
+while robot.step(TIME_STEP) != -1:
+    leftSpeed = 1.0
+    rightSpeed = 1.0
+    right_ir_val=ds[0].getValue()
+    mid_ir_value=ds[1].getValue()
+    left_ir_value=ds[2].getValue()
+    print("Left {0}, Middle {1}, right {2}".format(left_ir_value,mid_ir_value,right_ir_val))
+
+    if left_ir_value < 460 and right_ir_val < 460 and mid_ir_value >= 460:
+        wheels[0].setVelocity(rightSpeed)
+        wheels[1].setVelocity(leftSpeed)
+        wheels[2].setVelocity(rightSpeed)
+        wheels[3].setVelocity(leftSpeed)
+    elif left_ir_value < 460 and right_ir_val >= 460 and mid_ir_value >= 460:
+        wheels[0].setVelocity(0)
+        wheels[1].setVelocity(leftSpeed)
+        wheels[2].setVelocity(0)
+        wheels[3].setVelocity(leftSpeed)
+    elif left_ir_value >= 460 and right_ir_val < 460 and mid_ir_value >= 460:
+        wheels[0].setVelocity(rightSpeed)
+        wheels[1].setVelocity(0)
+        wheels[2].setVelocity(rightSpeed)
+        wheels[3].setVelocity(0)
+    # elif left_ir_value >= 460 and right_ir_val >= 460 and mid_ir_value >= 460:
+        # wheels[0].setVelocity(rightSpeed)
+        # wheels[1].setVelocity(leftSpeed)
+        # wheels[2].setVelocity(rightSpeed)
+        # wheels[3].setVelocity(leftSpeed)
